@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Adithia Christian | Front-End & UI/UX Portfolio</title>
+  <meta name="description" content="Information Systems student designing and building clean, fast, easy-to-use web interfaces." />
+  <meta name="theme-color" content="#eef3f4" />
+  <meta property="og:title" content="Adithia Christian | Front-End & UI/UX Portfolio" />
+  <meta property="og:description" content="Information Systems student designing and building clean, fast, easy-to-use web interfaces." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,500..800&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <canvas id="contours" aria-hidden="true"></canvas>
+
+  <!-- NAV: floating pill -->
+  <header class="nav">
+    <nav class="nav__pill" aria-label="Main">
+      <a href="#top" class="nav__brand">Adithia Christian</a>
+      <div class="nav__links" id="navLinks">
+        <a href="#about">About</a>
+        <a href="#achievements">Achievements</a>
+        <a href="#skills">Skills</a>
+        <a href="#projects">Projects</a>
+        <a href="#contact" class="nav__cta nav__cta--menu">Contact <span aria-hidden="true">↗</span></a>
+      </div>
+      <a href="#contact" class="nav__cta nav__cta--bar">Contact <span aria-hidden="true">↗</span></a>
+      <button class="nav__toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+        <span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+  <main id="main">
+    <!-- HERO -->
+    <section class="hero" id="top">
+      <div class="hero__left">
+        <h1 class="hero__name cond"><span>Adithia</span><span>Christian</span></h1>
+        <ul class="hero__facts">
+          <li>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>
+            Indonesia
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/></svg>
+            Information Systems student
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></svg>
+            Front-end, UI/UX &amp; full-stack
+          </li>
+        </ul>
+      </div>
+
+      <figure class="hero__portrait" id="portrait">
+        <div class="aura" aria-hidden="true"></div>
+        <!-- Taruh foto potret tanpa background (PNG transparan) di img/portrait.png.
+             Tombol "Show aura" hanya menyalakan aura warna di belakang foto ini. -->
+        <img src="img/portrait.png" alt="Portrait of Adithia Christian" id="portraitImg" />
+        <div class="portrait-placeholder" aria-hidden="true">
+          <svg viewBox="0 0 200 260"><circle cx="100" cy="78" r="46"/><path d="M14 260c4-62 40-104 86-104s82 42 86 104z"/></svg>
+          <span>Your photo here<br /><code>img/portrait.png</code></span>
+        </div>
+      </figure>
+
+      <aside class="hero__panel" aria-label="Quick facts">
+        <div class="bracket">
+          <p class="label">Currently</p>
+          <p class="panel__title">Information Systems Student</p>
+          <p class="panel__sub">Focused on front-end &amp; UI/UX</p>
+        </div>
+        <div class="bracket">
+          <p class="label">Latest Project</p>
+          <p class="panel__title">cartaAI</p>
+          <p class="panel__sub">React + FastAPI, 2026</p>
+          <svg class="spark" viewBox="0 0 200 40" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0 30 C 20 26, 30 14, 50 10 S 80 6, 100 14 S 140 18, 160 22 S 190 28, 200 30" />
+          </svg>
+        </div>
+        <div class="bracket">
+          <p class="label">At a Glance</p>
+          <dl class="glance">
+            <div><dt>Projects</dt><dd data-count="4">4</dd></div>
+            <div><dt>Stacks</dt><dd data-count="12">12</dd></div>
+            <div><dt>Awards</dt><dd data-count="1">1</dd></div>
+          </dl>
+        </div>
+      </aside>
+
+      <button class="aura-toggle" id="auraToggle" aria-pressed="false">
+        <span class="aura-toggle__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M7 7h12l-3-3M17 17H5l3 3"/></svg>
+        </span>
+        <span class="aura-toggle__text"><strong>Show aura</strong><small>Background glow</small></span>
+      </button>
+
+      <a href="#projects" class="cut-btn hero__cta">View projects <span aria-hidden="true">↗</span></a>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="section tone-ink" id="about">
+      <div class="wrap">
+        <div class="sec-head" data-reveal="wipe">
+          <h2 class="cond sec-title">About</h2>
+          <div class="sec-meta">
+            <p class="label">Who I am</p>
+            <p class="sec-sub">Design + code</p>
+          </div>
+        </div>
+        <div class="about">
+          <div class="about__text" data-reveal>
+            <p>I'm an Information Systems student who started out designing interfaces and then fell for building them myself.</p>
+            <p>Today I work on both sides: mapping flows and screens in Figma, then shipping them with React, Tailwind or Laravel. Right now I'm going deeper into full-stack work, wiring front-ends to APIs, databases, auth and payments, the way I did in cartaAI.</p>
+          </div>
+          <dl class="facts">
+            <div class="bracket" data-reveal><dt class="label">Studying</dt><dd>Information Systems</dd></div>
+            <div class="bracket" data-reveal><dt class="label">Based in</dt><dd>Indonesia</dd></div>
+            <div class="bracket" data-reveal><dt class="label">Works across</dt><dd>UI/UX, front-end, back-end</dd></div>
+            <div class="bracket" data-reveal><dt class="label">Building</dt><dd>cartaAI, an AI invitation maker</dd></div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACHIEVEMENTS -->
+    <section class="section" id="achievements">
+      <div class="wrap">
+        <div class="sec-head" data-reveal="wipe">
+          <h2 class="cond sec-title">Achievements</h2>
+          <div class="sec-meta">
+            <p class="label">Competitions</p>
+            <p class="sec-sub">Recognition so far</p>
+          </div>
+        </div>
+        <article class="bracket achievement" data-reveal>
+          <div class="achievement__media">
+            <!-- Ganti dengan foto lomba: <img src="img/proxocoris.jpg" alt="..."> -->
+            <div class="achievement__placeholder" aria-hidden="true">
+              <span class="cond">UI/UX</span>
+              <small>Add a competition photo<br /><code>img/proxocoris.jpg</code></small>
+            </div>
+            <span class="achievement__badge cond">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3h8l-2 6h-4L8 3Zm4 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z" /></svg>
+              3rd place
+            </span>
+          </div>
+          <div class="achievement__body">
+            <p class="label">International IT Competition</p>
+            <h3 class="cond">3rd place<span>PROXOCORIS · UI/UX Design</span></h3>
+            <p class="achievement__desc">Designed an app solution from user research to a high-fidelity, clickable prototype in Figma, and presented it to the judges.</p>
+            <dl class="achievement__facts">
+              <div><dt class="label">Category</dt><dd>UI/UX Design</dd></div>
+              <div><dt class="label">Result</dt><dd>3rd place</dd></div>
+              <div><dt class="label">Tool</dt><dd>Figma</dd></div>
+            </dl>
+            <ul class="tags"><li>User research</li><li>Wireframing</li><li>Prototyping</li></ul>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section class="section" id="skills" data-reveal-style="scan">
+      <div class="wrap">
+        <div class="sec-head" data-reveal="wipe">
+          <h2 class="cond sec-title">Skills</h2>
+          <div class="sec-meta">
+            <p class="label">Toolkit</p>
+            <p class="sec-sub">What I build with</p>
+          </div>
+        </div>
+        <div class="skills">
+          <article class="bracket skill" data-reveal>
+            <p class="label">Design</p>
+            <h3 class="cond">UI/UX</h3>
+            <p class="skill__desc">Flows, wireframes and high-fidelity prototypes that are ready to hand off.</p>
+            <ul class="tags"><li>Figma</li><li>Prototyping</li><li>Design systems</li></ul>
+          </article>
+          <article class="bracket skill" data-reveal>
+            <p class="label">Front-end</p>
+            <h3 class="cond">Interfaces</h3>
+            <p class="skill__desc">Responsive, accessible pages and apps with modern JavaScript.</p>
+            <ul class="tags"><li>HTML</li><li>CSS</li><li>JavaScript</li><li>React</li><li>Tailwind</li><li>Bootstrap</li><li>Vite</li></ul>
+          </article>
+          <article class="bracket skill" data-reveal>
+            <p class="label">Back-end</p>
+            <h3 class="cond">Full-stack</h3>
+            <p class="skill__desc">APIs, auth, databases and payments to turn a design into a working product.</p>
+            <ul class="tags"><li>PHP</li><li>Laravel</li><li>FastAPI</li><li>Supabase</li><li>MySQL</li><li>PostgreSQL</li></ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section class="section" id="projects">
+      <div class="wrap">
+        <div class="sec-head" data-reveal="wipe">
+          <h2 class="cond sec-title">Projects</h2>
+          <div class="sec-meta">
+            <p class="label">Selected work</p>
+            <p class="sec-sub">4 projects</p>
+          </div>
+        </div>
+        <ul class="projects">
+          <li class="project" data-reveal>
+            <div class="project__media media--carta">
+              <!-- Ganti dengan screenshot: <img src="img/cartaai.webp" alt="..."> -->
+              <div class="mock" aria-hidden="true"><i class="w60"></i><i class="w40"></i><b></b><i class="w80"></i></div>
+            </div>
+            <div class="project__row">
+              <p class="label">Full-stack · AI</p>
+              <h3 class="cond">cartaAI</h3>
+            </div>
+            <p class="project__desc">AI wedding-invitation generator. Couples enter their event details and the AI drafts a ready-to-share invitation. Google sign-in, free and premium tiers, Midtrans payments.</p>
+            <ul class="tags tags--sm"><li>React</li><li>Tailwind</li><li>FastAPI</li><li>Supabase</li><li>Midtrans</li></ul>
+            <div class="project__actions">
+              <a class="cut-btn is-solid" href="https://github.com/adithiachristian7/cartaAI" target="_blank" rel="noopener">Source code <span aria-hidden="true">↗</span></a>
+            </div>
+          </li>
+          <li class="project" data-reveal>
+            <div class="project__media media--wo">
+              <div class="mock" aria-hidden="true"><i class="w60"></i><b></b><i class="w40"></i></div>
+            </div>
+            <div class="project__row">
+              <p class="label">Website · Business</p>
+              <h3 class="cond">Wedding Organizer</h3>
+            </div>
+            <p class="project__desc">Company profile for a wedding-organizer business: services, gallery and contact in an elegant, responsive layout.</p>
+            <ul class="tags tags--sm"><li>HTML</li><li>CSS</li><li>JavaScript</li></ul>
+            <div class="project__actions">
+              <a class="cut-btn is-solid" href="https://wedding-organizer-website-nine.vercel.app" target="_blank" rel="noopener">Live site <span aria-hidden="true">↗</span></a>
+              <a class="cut-btn" href="https://github.com/adithiachristian7/WeddingOrganizer-website" target="_blank" rel="noopener">Code <span aria-hidden="true">↗</span></a>
+            </div>
+          </li>
+          <li class="project" data-reveal>
+            <div class="project__media media--dash">
+              <div class="mock mock--bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+            </div>
+            <div class="project__row">
+              <p class="label">Dashboard · Front-end</p>
+              <h3 class="cond">Richeese Dashboard</h3>
+            </div>
+            <p class="project__desc">Admin dashboard for tracking sales and menu items, with compact cards and charts.</p>
+            <ul class="tags tags--sm"><li>Vite</li><li>Tailwind</li></ul>
+            <div class="project__actions">
+              <a class="cut-btn is-solid" href="https://github.com/adithiachristian7/Dashboard-Richeese" target="_blank" rel="noopener">Source code <span aria-hidden="true">↗</span></a>
+            </div>
+          </li>
+          <li class="project" data-reveal>
+            <div class="project__media media--web">
+              <div class="mock" aria-hidden="true"><i class="w80"></i><i class="w40"></i><span><u></u><u></u><u></u></span></div>
+            </div>
+            <div class="project__row">
+              <p class="label">Website · Front-end</p>
+              <h3 class="cond">Web Desain</h3>
+            </div>
+            <p class="project__desc">Multi-page static site built with Bootstrap 5, practising layout structure and responsive components.</p>
+            <ul class="tags tags--sm"><li>HTML</li><li>Bootstrap 5</li></ul>
+            <div class="project__actions">
+              <a class="cut-btn is-solid" href="https://github.com/adithiachristian7/Project-Web-Desain" target="_blank" rel="noopener">Source code <span aria-hidden="true">↗</span></a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="section tone-ink contact" id="contact" data-reveal-style="scan">
+      <div class="wrap contact__grid">
+        <div data-reveal="wipe">
+          <h2 class="cond contact__title">Let's<br />work.</h2>
+          <p class="contact__sub">Open to internships, collaborations and freelance work in front-end and UI/UX.</p>
+        </div>
+        <ul class="contact__list">
+          <!-- Ganti email & LinkedIn dengan punya kamu -->
+          <li data-reveal><a class="bracket" href="https://github.com/adithiachristian7" target="_blank" rel="noopener"><span class="label">GitHub</span><span class="contact__value">adithiachristian7</span><span class="contact__arrow" aria-hidden="true">↗</span></a></li>
+          <li data-reveal><a class="bracket" href="mailto:you@example.com"><span class="label">Email</span><span class="contact__value">you@example.com</span><span class="contact__arrow" aria-hidden="true">↗</span></a></li>
+          <li data-reveal><a class="bracket" href="#" target="_blank" rel="noopener"><span class="label">LinkedIn</span><span class="contact__value">your-linkedin</span><span class="contact__arrow" aria-hidden="true">↗</span></a></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer tone-ink">
+    <div class="wrap footer__inner">
+      <p>© <span id="year"></span> Adithia Christian</p>
+      <a href="#top">Back to top ↑</a>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
