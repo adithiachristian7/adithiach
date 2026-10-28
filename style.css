@@ -322,9 +322,9 @@ button { font: inherit; }
   .hero { grid-template-columns: 1fr; min-height: 0; padding-top: 104px; padding-bottom: 32px; gap: 28px; }
   /* On phones the portrait is cropped at the waist and fades into the page */
   .hero__portrait {
-    order: 2; min-height: 0; height: calc(min(80vw, 380px) * 1.12); overflow: hidden; align-items: start;
-    -webkit-mask-image: linear-gradient(to bottom, #000 68%, transparent 100%);
-    mask-image: linear-gradient(to bottom, #000 68%, transparent 100%);
+    order: 2; min-height: 0; height: calc(min(80vw, 380px) * 1.24); overflow: hidden; align-items: start;
+    -webkit-mask-image: linear-gradient(to bottom, #000 86%, rgba(0, 0, 0, 0.35) 96%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 86%, rgba(0, 0, 0, 0.35) 96%, transparent 100%);
   }
   .hero__portrait img {
     align-self: start; width: min(80vw, 380px); height: auto; max-height: none;
