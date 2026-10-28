@@ -16,28 +16,185 @@ navLinks.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => 
 // Foto potret: tampilkan placeholder kalau img/portrait.png belum ada
 const portrait = document.getElementById('portrait');
 const portraitImg = document.getElementById('portraitImg');
-const mainSrc = portraitImg.getAttribute('src');
-const altSrc = portraitImg.dataset.alt;
-let hasAlt = false;
-portraitImg.addEventListener('error', () => {
-  if (portraitImg.getAttribute('src') === mainSrc) portrait.classList.add('no-photo');
-  else portraitImg.src = mainSrc;
-});
+portraitImg.addEventListener('error', () => portrait.classList.add('no-photo'));
 if (portraitImg.complete && portraitImg.naturalWidth === 0) portrait.classList.add('no-photo');
-if (altSrc) {
-  const probe = new Image();
-  probe.onload = () => { hasAlt = true; };
-  probe.src = altSrc;
+
+// Efek aura: versi aura "terbakar" hilang saat halaman dibuka, tombol "Show aura" membakar
+// bolak-balik antara dua versi, dan jejak kursor/jari sesaat memperlihatkan versi yang lain.
+const auraBtn = document.getElementById('auraToggle');
+const fxCanvas = document.getElementById('portraitFx');
+let portraitFx = null;
+
+function mountPortraitFx(photo, aura) {
+  const ctx = fxCanvas.getContext('2d');
+  const layer = document.createElement('canvas');
+  const lctx = layer.getContext('2d');
+
+  // mask, glow dan jejak dihitung di resolusi kecil lalu di-scale halus
+  const MW = 260;
+  const MH = Math.round((MW * photo.naturalHeight) / photo.naturalWidth);
+  const makeCanvas = () => { const c = document.createElement('canvas'); c.width = MW; c.height = MH; return c; };
+  const trail = makeCanvas(), mask = makeCanvas(), glow = makeCanvas();
+  const tctx = trail.getContext('2d', { willReadFrequently: true });
+  const mctx = mask.getContext('2d'), gctx = glow.getContext('2d');
+  const mdata = mctx.createImageData(MW, MH), gdata = gctx.createImageData(MW, MH);
+
+  // noise berlapis untuk tepi bakar yang tidak rata
+  const rnd = (x, y) => { const v = Math.sin(x * 91.7 + y * 47.3 + 3.1) * 15731.743; return v - Math.floor(v); };
+  const vnoise = (x, y) => {
+    const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi;
+    const u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
+    const a = rnd(xi, yi), b = rnd(xi + 1, yi), c = rnd(xi, yi + 1), d = rnd(xi + 1, yi + 1);
+    return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
+  };
+  const field = new Float32Array(MW * MH);
+  for (let j = 0; j < MH; j++) {
+    for (let i = 0; i < MW; i++) {
+      const x = (i / MW) * 4.2 + 1.7, y = (j / MW) * 4.2 + 1.7;
+      field[j * MW + i] = vnoise(x, y) * 0.53 + vnoise(x * 2, y * 2) * 0.27 + vnoise(x * 4, y * 4) * 0.13 + vnoise(x * 8, y * 8) * 0.07;
+    }
+  }
+  const ss = (e0, e1, x) => { const t = Math.min(1, Math.max(0, (x - e0) / (e1 - e0))); return t * t * (3 - 2 * t); };
+
+  // progress 0 = aura, 1 = foto asli
+  let progress = reduceMotion ? 1 : 0, target = 1;
+  const duration = 2.2, edge = 0.07;
+  let cw = 0, ch = 0;
+
+  const resize = () => {
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    cw = Math.round(fxCanvas.clientWidth * dpr);
+    ch = Math.round(fxCanvas.clientHeight * dpr);
+    if (!cw || !ch) return;
+    fxCanvas.width = layer.width = cw;
+    fxCanvas.height = layer.height = ch;
+    wake();
+  };
+
+  // jejak kursor
+  let pointer = null, lastPointer = null, activeFrames = 0, rect = fxCanvas.getBoundingClientRect();
+  const onPointer = (e) => {
+    rect = fxCanvas.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width, y = (e.clientY - rect.top) / rect.height;
+    if (x < -0.1 || x > 1.1 || y < -0.1 || y > 1.1) { lastPointer = null; return; }
+    pointer = { x, y };
+    wake();
+  };
+  const paintTrail = () => {
+    tctx.globalCompositeOperation = 'destination-out';
+    tctx.fillStyle = 'rgba(0,0,0,0.045)';
+    tctx.fillRect(0, 0, MW, MH);
+    if (!pointer) return;
+    tctx.globalCompositeOperation = 'lighter';
+    const brush = (90 / rect.width) * MW;
+    const from = lastPointer || pointer;
+    const steps = Math.max(1, Math.ceil(Math.hypot((pointer.x - from.x) * MW, (pointer.y - from.y) * MH) / (brush * 0.35)));
+    for (let k = 1; k <= steps; k++) {
+      const cx = (from.x + ((pointer.x - from.x) * k) / steps) * MW;
+      const cy = (from.y + ((pointer.y - from.y) * k) / steps) * MH;
+      const g = tctx.createRadialGradient(cx, cy, 0, cx, cy, brush);
+      g.addColorStop(0, 'rgba(255,255,255,0.35)');
+      g.addColorStop(1, 'rgba(255,255,255,0)');
+      tctx.fillStyle = g;
+      tctx.fillRect(cx - brush, cy - brush, brush * 2, brush * 2);
+    }
+    lastPointer = pointer;
+    pointer = null;
+  };
+
+  const render = () => {
+    const td = tctx.getImageData(0, 0, MW, MH).data;
+    const md = mdata.data, gd = gdata.data;
+    const th = progress * (1 + edge * 2) - edge;
+    for (let i = 0; i < MW * MH; i++) {
+      const n = field[i];
+      const revealed = 1 - ss(th - edge * 0.35, th + edge * 0.35, n);
+      const burn = (1 - ss(0, edge * 0.45, Math.abs(n - th))) * 0.9;
+      const tm = ss(0.28, 0.55, td[i * 4 + 3] / 255 + (n - 0.5) * 0.35);
+      const tg = Math.pow(4 * tm * (1 - tm), 6) * 0.75;
+      const showPhoto = revealed + (1 - 2 * revealed) * tm;
+      const o = i * 4;
+      md[o] = md[o + 1] = md[o + 2] = 255;
+      md[o + 3] = (1 - showPhoto) * 255;
+      gd[o] = 255; gd[o + 1] = 212; gd[o + 2] = 59;
+      gd[o + 3] = Math.min(1, burn * (progress > 0 && progress < 1 ? 1 : 0) + tg) * 255;
+    }
+    mctx.putImageData(mdata, 0, 0);
+    gctx.putImageData(gdata, 0, 0);
+
+    ctx.clearRect(0, 0, cw, ch);
+    ctx.drawImage(photo, 0, 0, cw, ch);
+    // versi aura, hanya di area mask
+    lctx.globalCompositeOperation = 'source-over';
+    lctx.clearRect(0, 0, cw, ch);
+    lctx.drawImage(aura, 0, 0, cw, ch);
+    lctx.globalCompositeOperation = 'destination-in';
+    lctx.drawImage(mask, 0, 0, cw, ch);
+    ctx.drawImage(layer, 0, 0);
+    // garis bakar kuning, hanya di dalam siluet
+    lctx.globalCompositeOperation = 'source-over';
+    lctx.clearRect(0, 0, cw, ch);
+    lctx.drawImage(glow, 0, 0, cw, ch);
+    lctx.globalCompositeOperation = 'destination-in';
+    lctx.drawImage(photo, 0, 0, cw, ch);
+    ctx.drawImage(layer, 0, 0);
+  };
+
+  let raf = 0, running = false, last = performance.now();
+  const frame = (now) => {
+    const dt = Math.min((now - last) / 1000, 0.05);
+    last = now;
+    const burning = progress !== target;
+    if (burning) {
+      const step = dt / duration;
+      progress = target > progress ? Math.min(target, progress + step) : Math.max(target, progress - step);
+    }
+    const moved = pointer !== null;
+    paintTrail();
+    render();
+    activeFrames = moved ? 150 : activeFrames - 1;
+    if (burning || activeFrames > 0) raf = requestAnimationFrame(frame);
+    else { running = false; lastPointer = null; }
+  };
+  function wake() {
+    if (running || document.hidden || !cw) return;
+    running = true;
+    last = performance.now();
+    raf = requestAnimationFrame(frame);
+  }
+
+  new ResizeObserver(resize).observe(fxCanvas);
+  if (!reduceMotion) addEventListener('pointermove', onPointer, { passive: true });
+  document.addEventListener('visibilitychange', wake);
+  portrait.classList.add('fx-ready');
+  resize();
+
+  return {
+    show(which) {
+      target = which === 'aura' ? 0 : 1;
+      if (reduceMotion) progress = target;
+      wake();
+    },
+  };
 }
 
-// Tombol "Show aura": nyalakan aura warna dan ganti foto kalau ada foto kedua
-const auraBtn = document.getElementById('auraToggle');
+const loadImage = (src) => new Promise((resolve, reject) => {
+  const im = new Image();
+  im.onload = () => resolve(im);
+  im.onerror = reject;
+  im.src = src;
+});
+if (portraitImg.dataset.aura && fxCanvas.getContext) {
+  Promise.all([loadImage(portraitImg.getAttribute('src')), loadImage(portraitImg.dataset.aura)])
+    .then(([photo, aura]) => { portraitFx = mountPortraitFx(photo, aura); })
+    .catch(() => { auraBtn.hidden = true; });
+}
+
 auraBtn.addEventListener('click', () => {
   const on = auraBtn.getAttribute('aria-pressed') !== 'true';
   auraBtn.setAttribute('aria-pressed', String(on));
-  auraBtn.querySelector('strong').textContent = on ? 'Hide aura' : 'Show aura';
-  portrait.classList.toggle('is-aura', on);
-  if (hasAlt) portraitImg.src = on ? altSrc : mainSrc;
+  auraBtn.querySelector('strong').textContent = on ? 'Show photo' : 'Show aura';
+  if (portraitFx) portraitFx.show(on ? 'aura' : 'photo');
 });
 
 // Garis kontur topografi di latar (marching squares di atas noise)
