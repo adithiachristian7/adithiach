@@ -320,8 +320,16 @@ button { font: inherit; }
   .nav__cta--menu { display: flex; justify-content: center; margin: 6px 0 0; padding: 12px; }
 
   .hero { grid-template-columns: 1fr; min-height: 0; padding-top: 104px; padding-bottom: 32px; gap: 28px; }
-  .hero__portrait { order: 2; min-height: 0; height: auto; }
-  .hero__portrait img { max-height: 70svh; }
+  /* On phones the portrait is cropped at the waist and fades into the page */
+  .hero__portrait {
+    order: 2; min-height: 0; height: calc(min(80vw, 380px) * 1.12); overflow: hidden; align-items: start;
+    -webkit-mask-image: linear-gradient(to bottom, #000 68%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 68%, transparent 100%);
+  }
+  .hero__portrait img {
+    align-self: start; width: min(80vw, 380px); height: auto; max-height: none;
+    filter: drop-shadow(10px 6px 8px rgba(11, 16, 38, 0.26));
+  }
   .hero__panel { order: 3; justify-self: stretch; width: 100%; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
   .aura-toggle, .hero__cta { position: static; order: 4; }
   .hero__cta { justify-self: start; }
